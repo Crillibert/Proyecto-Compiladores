@@ -1,0 +1,3 @@
+EnTEro Contador;
+ContadOr = 1;
+IF ( contador==1){return=1;} Else {return=0;} \r\n
