@@ -1,17 +1,18 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.*;;
+import java.util.regex.*;
+
 public class AnLexico {
-    //Los comentarios pueden ser aceptados con // y terminan con salto de linea
-    // pueden ir con /* y */ si son entre varias lineas
-    //Manejar: entero, real, bool, char y string
+    // Los comentarios pueden ser aceptados con // y terminan con salto de linea
+    // Pueden ir con /* y */ si son entre varias lineas
+    // Manejar: entero, real, bool, char y string
     //[tipo de dato] [identificador][,identificador]*[=<expresión>];
-    //Ejemplo
-    /*Entero intVar;
+    // Ejemplo
+    /* Entero intVar;
     Entero i, j, k;
     Entero i = 1+1;*/
-    //Se debe de declarar el tipo de variable antes del nombre
+    // Se debe de declarar el tipo de variable antes del nombre
     //# es modulo
 
     //Regex para evaluar cadenas
@@ -28,13 +29,12 @@ public class AnLexico {
     private List<String> Tokens = new ArrayList<>();
     private String CadenaFuente;
 
-    //Constructor
+    // Constructor
     public AnLexico(String pEntrada){
         this.CadenaFuente = pEntrada;
     }
 
-
-    //Basado en el original del inge pero con regex en lugar de listas
+    // Basado en el original del inge pero con regex en lugar de listas
 
     private boolean esOperadorChar(Character pCharacter){
         for (Character c: operadores){
@@ -44,6 +44,7 @@ public class AnLexico {
         }
         return false;
     }
+
     private boolean esAgrupadorChar(Character pCharacter){
         for (Character c: agrupadores){
             if (c.equals(pCharacter)){
@@ -52,58 +53,77 @@ public class AnLexico {
         }
         return false;
     }
+
     private boolean esReservada(String pString){
         Matcher MatchReservada = PatronesReservadas.matcher(pString);
-        if (MatchReservada.matches()) {
-            return true;            
-        }
-        return false;
+        return MatchReservada.matches();
     }
+
     private boolean esTipoDeDato(String pString){
         Matcher MatchTipoDeDato = PatronTipoDeDato.matcher(pString);
-        if (MatchTipoDeDato.matches()) {
-            return true;            
-        }
-        return false;
-    }
-    private boolean esComentario(String pString){
-        Matcher MatchTipoDeDato = PatronTipoDeDato.matcher(pString);
-        if (MatchTipoDeDato.matches()) {
-            return true;            
-        }
-        return false;
+        return MatchTipoDeDato.matches();
     }
     private boolean esIdentificador(String pString){
         Matcher MatchVariable = PatronNombreVariable.matcher(pString);
-        if (MatchVariable.matches()) {
-            return true;            
-        }
-        return false;
+        return MatchVariable.matches();
     }
+
     private boolean esOperador(String pString){
         Matcher MatchOperador = PatronOperadores.matcher(pString);
-        if (MatchOperador.matches()) {
-            return true;            
-        }
-        return false;
+        return MatchOperador.matches();
     }
-     private boolean esNumero(String pString){
+
+    private boolean esNumero(String pString){
         Matcher MatchNumero = PatronNumero.matcher(pString);
-        if (MatchNumero.matches()){
-            return true;
-        }
-        return false;
+        return MatchNumero.matches();
     }
 
     public List<String> AnalizadorCadena() {
         char[] fuente = CadenaFuente.toCharArray();
         String lexema = "";
         int i = 0;
-    
+        boolean enComentarioBloque = false;
+        boolean enComentarioLinea = false;
+
         while (i < fuente.length) {
             char c = fuente[i];
             char siguiente = (i + 1 < fuente.length) ? fuente[i + 1] : 'ε';
-    
+            
+            // Detectar apertura de comentario de bloque "/*"
+            if (!enComentarioLinea && !enComentarioBloque && c == '/' && siguiente == '*') {
+                enComentarioBloque = true;
+                i += 2; // Saltar "/*"
+                continue;
+            }
+            
+            // Detectar cierre de comentario de bloque "*/"
+            if (enComentarioBloque && c == '*' && siguiente == '/') {
+                enComentarioBloque = false;
+                i += 2; // Saltar "*/"
+                continue;
+            }
+            
+            // Detectar comentario de línea "//"
+            if (!enComentarioLinea && !enComentarioBloque && c == '/' && siguiente == '/') {
+                enComentarioLinea = true;
+                i += 2; // Saltar "//"
+                continue;
+            }
+
+            // Si estamos en un comentario de línea, ignoramos hasta el salto de línea
+            if (enComentarioLinea) {
+                if (c == '\n') {
+                    enComentarioLinea = false;
+                }
+                i++;
+                continue;
+            }
+            // Si estamos dentro de un comentario de bloque, ignoramos todo
+            if (enComentarioBloque) {
+                i++;
+                continue;
+            }
+
             // Si es un espacio en blanco o un delimitador, procesar el lexema acumulado
             if (Character.isWhitespace(c) || esOperadorChar(c) || esAgrupadorChar(c) || c == ';') {
                 if (!lexema.isEmpty()) {
@@ -152,7 +172,7 @@ public class AnLexico {
             }
             i++;
         }
-    
+
         // Procesar el último lexema si queda algo pendiente
         if (!lexema.isEmpty()) {
             if (esReservada(lexema.toLowerCase()) || esTipoDeDato(lexema.toLowerCase())) {
@@ -167,12 +187,12 @@ public class AnLexico {
                 Tokens.add(lexema + "   -> Identificador");
             }
         }
-    
         return Tokens;
     }
+
     public static void main(String[] args) {
-        String str = "IF ( contador==1){return=1;} Else {return=0;} \r\n";
-        AnLexico scanner  =  new AnLexico(str);    
+        String str = "IF ( contador==1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
+        AnLexico scanner = new AnLexico(str);    
         List<String> Tokens = scanner.AnalizadorCadena();
         for (String s : Tokens){
             System.out.println(s);
