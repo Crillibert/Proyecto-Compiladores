@@ -82,28 +82,44 @@ public class AnLexico {
         char[] fuente = CadenaFuente.toCharArray();
         String lexema = "";
         int i = 0;
-        boolean enComentario = false;
+        boolean enComentarioBloque = false;
+        boolean enComentarioLinea = false;
 
         while (i < fuente.length) {
             char c = fuente[i];
             char siguiente = (i + 1 < fuente.length) ? fuente[i + 1] : 'ø';
             
-            // Detectar apertura de comentario "/*"
-            if (!enComentario && c == '/' && siguiente == '*') {
-                enComentario = true;
+            // Detectar apertura de comentario de bloque "/*"
+            if (!enComentarioLinea && !enComentarioBloque && c == '/' && siguiente == '*') {
+                enComentarioBloque = true;
                 i += 2; // Saltar "/*"
                 continue;
             }
             
-            // Detectar cierre de comentario "*/"
-            if (enComentario && c == '*' && siguiente == '/') {
-                enComentario = false;
+            // Detectar cierre de comentario de bloque "*/"
+            if (enComentarioBloque && c == '*' && siguiente == '/') {
+                enComentarioBloque = false;
                 i += 2; // Saltar "*/"
                 continue;
             }
+            
+            // Detectar comentario de línea "//"
+            if (!enComentarioLinea && !enComentarioBloque && c == '/' && siguiente == '/') {
+                enComentarioLinea = true;
+                i += 2; // Saltar "//"
+                continue;
+            }
 
-            // Si estamos en un comentario, ignoramos todo
-            if (enComentario) {
+            // Si estamos en un comentario de línea, ignoramos hasta el salto de línea
+            if (enComentarioLinea) {
+                if (c == '\n') {
+                    enComentarioLinea = false;
+                }
+                i++;
+                continue;
+            }
+            // Si estamos dentro de un comentario de bloque, ignoramos todo
+            if (enComentarioBloque) {
                 i++;
                 continue;
             }
@@ -172,12 +188,11 @@ public class AnLexico {
                 Tokens.add(lexema + "   -> Identificador");
             }
         }
-
         return Tokens;
     }
 
     public static void main(String[] args) {
-        String str = "IF ( contador==1.1){return=1;} /* Esto es un comentario */ Else {return=-5;}";
+        String str = "IF ( contador==1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
         AnLexico scanner = new AnLexico(str);    
         List<String> Tokens = scanner.AnalizadorCadena();
         for (String s : Tokens){
