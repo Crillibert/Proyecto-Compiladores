@@ -15,15 +15,15 @@ public class AnLexico {
     //# es modulo
 
     //Regex para evaluar cadenas
-    Pattern PatronNombreVariable = Pattern.compile("[A-z]+");
+    Pattern PatronNombreVariable = Pattern.compile("[A-z]+|[A-z]+[,]");
     Pattern PatronNumero = Pattern.compile("(-|)([0-9]+|([0-9]+.[0-9]+))");
     Pattern PatronTipoDeDato = Pattern.compile("(Real)|(Entero)|(Booleano)|(Caracter)|(Cadena)");
     //Este solo revisa para operadores de dos caracteres
-    Pattern PatronOperadores = Pattern.compile("[+][+]|[-][-]|[*][*]|[<][=]|[>][=]|[=][=]");
+    Pattern PatronOperadores = Pattern.compile("[+][+]|[-][-]|[*][*]|[<][=]|[>][=]|[=][=]|[!][=]|[|][|]|[&][&]");
     Pattern PatronesReservadas = Pattern.compile("(if)|(else)|(then)|(return)|(for)|(do)|(while)|(EscribirLinea)|(Escribir)|(Longitud)|(aCadena)");
     //private String[] lexemas = new String[]{"**", "==", ">=", "<>", "<="};
     //Agregar operador ++ y --
-    private char[] operadores = new char[]{'+', '-', '*', '/', '^', '=', '#', '>', '<'};
+    private char[] operadores = new char[]{'+', '-', '*', '/', '^', '=', '#', '>', '<','#','!'};
     private char[] agrupadores = new char[]{'(', ')', '[', ']', '{', '}', '"'};
     private List<String> Tokens = new ArrayList<>();
     private String CadenaFuente;
@@ -66,6 +66,13 @@ public class AnLexico {
         }
         return false;
     }
+    private boolean esComentario(String pString){
+        Matcher MatchTipoDeDato = PatronTipoDeDato.matcher(pString);
+        if (MatchTipoDeDato.matches()) {
+            return true;            
+        }
+        return false;
+    }
     private boolean esIdentificador(String pString){
         Matcher MatchVariable = PatronNombreVariable.matcher(pString);
         if (MatchVariable.matches()) {
@@ -80,14 +87,7 @@ public class AnLexico {
         }
         return false;
     }
-    private boolean esVariable(String pString){
-        Matcher MatchVariable = PatronNombreVariable.matcher(pString);
-        if (MatchVariable.matches()){
-            return true;
-        }
-        return false;
-    }
-    private boolean esNumero(String pString){
+     private boolean esNumero(String pString){
         Matcher MatchNumero = PatronNumero.matcher(pString);
         if (MatchNumero.matches()){
             return true;
@@ -102,7 +102,7 @@ public class AnLexico {
     
         while (i < fuente.length) {
             char c = fuente[i];
-            char siguiente = (i + 1 < fuente.length) ? fuente[i + 1] : 'ø';
+            char siguiente = (i + 1 < fuente.length) ? fuente[i + 1] : 'ε';
     
             // Si es un espacio en blanco o un delimitador, procesar el lexema acumulado
             if (Character.isWhitespace(c) || esOperadorChar(c) || esAgrupadorChar(c) || c == ';') {
@@ -111,7 +111,7 @@ public class AnLexico {
                     if (esReservada(lexema.toLowerCase()) || esTipoDeDato(lexema.toLowerCase())) {
                         Tokens.add(lexema + "   -> Reservada");
                     } else if (esNumero(lexema)) {
-                        if (lexema.contains(".")) {
+                        if (lexema.contains(".")) {// Distinción para real o entero
                             Tokens.add(lexema + "   -> NumReal");
                         } else {
                             Tokens.add(lexema + "   -> NumEntero");
@@ -122,7 +122,6 @@ public class AnLexico {
                     lexema = ""; // Reiniciar el lexema
                 }
     
-                // Procesar el carácter actual (operador, agrupador, etc.)
                 if (esOperadorChar(c)) {
                     // Manejar el caso especial del signo negativo
                     if (c == '-' && Character.isDigit(siguiente)) {
@@ -172,7 +171,7 @@ public class AnLexico {
         return Tokens;
     }
     public static void main(String[] args) {
-        String str = "IF ( contador==1.1){return=1;} Else {return=-5;} \r\n";
+        String str = "IF ( contador==1){return=1;} Else {return=0;} \r\n";
         AnLexico scanner  =  new AnLexico(str);    
         List<String> Tokens = scanner.AnalizadorCadena();
         for (String s : Tokens){
