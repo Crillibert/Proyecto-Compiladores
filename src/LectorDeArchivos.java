@@ -1,3 +1,5 @@
+package src;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -14,11 +16,13 @@ public class LectorDeArchivos {
         try {
             File Archivo = new File(nombreArchivo);
             Scanner Lector = new Scanner(Archivo);
+            int numeroLinea = 1;
             while (Lector.hasNextLine()){
                 String Linea = Lector.nextLine();
-                AnLexico scanner  =  new AnLexico(Linea); 
+                AnLexico scanner  =  new AnLexico(Linea,numeroLinea); 
                 List<String> Tokens = scanner.AnalizadorCadena();
                 ListaFinal.add(Tokens);
+                numeroLinea++;
             }
             Lector.close();
         }

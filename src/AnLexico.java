@@ -1,6 +1,7 @@
+package src;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.*;
 
 public class AnLexico {
@@ -28,10 +29,12 @@ public class AnLexico {
     private char[] agrupadores = new char[]{'(', ')', '[', ']', '{', '}', '"'};
     private List<String> Tokens = new ArrayList<>();
     private String CadenaFuente;
+    private int numeroLinea;
 
     // Constructor
-    public AnLexico(String pEntrada){
+    public AnLexico(String pEntrada, int pLinea){
         this.CadenaFuente = pEntrada;
+        this.numeroLinea = pLinea;
     }
 
     // Basado en el original del inge pero con regex en lugar de listas
@@ -138,6 +141,8 @@ public class AnLexico {
                         }
                     } else if (esIdentificador(lexema)) {
                         Tokens.add(lexema + "   -> Identificador");
+                    }else{
+                        Tokens.add(lexema + "   -> Error en columna "+i+", fila" +numeroLinea);
                     }
                     lexema = ""; // Reiniciar el lexema
                 }
@@ -191,8 +196,8 @@ public class AnLexico {
     }
 
     public static void main(String[] args) {
-        String str = "IF ( contador==1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
-        AnLexico scanner = new AnLexico(str);    
+        String str = "IF ( contador==1.1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
+        AnLexico scanner = new AnLexico(str,1);    
         List<String> Tokens = scanner.AnalizadorCadena();
         for (String s : Tokens){
             System.out.println(s);
