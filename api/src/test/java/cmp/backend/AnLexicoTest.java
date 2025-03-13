@@ -1,11 +1,10 @@
-package test;
+package cmp.backend;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
 import org.junit.Test;
-import src.AnLexico;
 
 public class AnLexicoTest {
 

@@ -1,4 +1,4 @@
-package src;
+package cmp.backend;
 
 import java.io.File;
 import java.io.FileNotFoundException;

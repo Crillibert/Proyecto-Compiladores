@@ -1,4 +1,4 @@
-package src;
+package cmp.backend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +196,7 @@ public class AnLexico {
     }
 
     public static void main(String[] args) {
-        String str = "IF ( contador==1.1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
+        String str = "IF ( contador==1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
         AnLexico scanner = new AnLexico(str,1);    
         List<String> Tokens = scanner.AnalizadorCadena();
         for (String s : Tokens){
