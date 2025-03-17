@@ -5,18 +5,17 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <h1>Analizador Léxico</h1> {/* Título agregado */}
+        <textarea
+          placeholder="Ingresa tu código aquí..."
+          style={{ width: '50%', height: '150px', margin: '20px', padding: '10px', fontSize: '16px' }}
+        />
+        <button
+          onClick={() => alert("Analizando...")}
+          style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
         >
-          Learn React
-        </a>
+          Analizar
+        </button>
       </header>
     </div>
   );
