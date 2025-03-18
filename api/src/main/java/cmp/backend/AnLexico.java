@@ -1,8 +1,11 @@
 package cmp.backend;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Hashtable;
 
 public class AnLexico {
     // Los comentarios pueden ser aceptados con // y terminan con salto de linea
@@ -82,6 +85,9 @@ public class AnLexico {
     }
 
     public List<String> AnalizadorCadena() {
+        int id = 0;
+        String idString;
+        Dictionary<String, String> TablaDeSimbolos = new Hashtable<>();
         char[] fuente = CadenaFuente.toCharArray();
         String lexema = "";
         int i = 0;
@@ -133,14 +139,22 @@ public class AnLexico {
                     // Clasificar el lexema acumulado
                     if (esReservada(lexema.toLowerCase()) || esTipoDeDato(lexema.toLowerCase())) {
                         Tokens.add(lexema + "   -> Reservada");
+                        TablaDeSimbolos.put(lexema, "Reservada");
                     } else if (esNumero(lexema)) {
                         if (lexema.contains(".")) {// Distinción para real o entero
                             Tokens.add(lexema + "   -> NumReal");
                         } else {
                             Tokens.add(lexema + "   -> NumEntero");
                         }
+                        id++;
+                        idString = "ID:" + Integer.toString(id);
+                        TablaDeSimbolos.put(lexema, idString);
+
                     } else if (esIdentificador(lexema)) {
                         Tokens.add(lexema + "   -> Identificador");
+                        id++;
+                        idString = "ID:" + Integer.toString(id);
+                        TablaDeSimbolos.put(lexema, idString);
                     }else{
                         Tokens.add(lexema + "   -> Error en columna "+i+", fila" +numeroLinea);
                     }
@@ -158,18 +172,23 @@ public class AnLexico {
                             String operadorCombinado = operador + Character.toString(siguiente);
                             if (esOperador(operadorCombinado)) {
                                 Tokens.add(operadorCombinado + "   -> Operador");
+                                TablaDeSimbolos.put(operadorCombinado, "Operador");
                                 i++; // Saltar el siguiente carácter ya que es parte del operador combinado
                             } else {
                                 Tokens.add(operador + "   -> Operador");
+                                TablaDeSimbolos.put(operador, "Operador");
                             }
                         } else {
                             Tokens.add(operador + "   -> Operador");
+                            TablaDeSimbolos.put(operador, "Operador");
                         }
                     }
                 } else if (esAgrupadorChar(c)) {
                     Tokens.add(Character.toString(c) + "   -> Agrupador");
+                    TablaDeSimbolos.put(Character.toString(c), "Agrupador");
                 } else if (c == ';') {
                     Tokens.add(Character.toString(c) + "   -> Terminal");
+                    TablaDeSimbolos.put(Character.toString(c), "Terminal");
                 }
             } else {
                 // Acumular caracteres en el lexema
@@ -188,8 +207,15 @@ public class AnLexico {
                 } else {
                     Tokens.add(lexema + "   -> NumEntero");
                 }
+                id++;
+                idString = "ID:" + Integer.toString(id);
+                TablaDeSimbolos.put(lexema, idString);
+                
             } else if (esIdentificador(lexema)) {
                 Tokens.add(lexema + "   -> Identificador");
+                id++;
+                idString = "ID:" + Integer.toString(id);
+                TablaDeSimbolos.put(lexema, idString);
             }
         }
         return Tokens;
