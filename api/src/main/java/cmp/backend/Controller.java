@@ -21,8 +21,7 @@ public class Controller {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "No se recibió código a analizar"));
         }
 
-        // Aquí llamás a tu clase AnLexico (necesitás adaptar este ejemplo si tu AnLexico funciona por línea)
-        AnLexico analizador = new AnLexico(codigo, 1); // Si tu constructor necesita la línea y número de línea
+        AnLexico analizador = new AnLexico(codigo, 1); 
         Map.Entry<List<String>, List<String>> resultado = analizador.AnalizadorCadena();
 
     // Extrae las listas de Tokens y Errors

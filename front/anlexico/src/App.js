@@ -1,54 +1,47 @@
 import React, { useState } from 'react';
 import './App.css';
-import SeleccionarArchivo from './components/SeleccionarArchivo'; // Componente para selección de archivo
+import SeleccionarArchivo from './components/SeleccionarArchivo';
 
 function App() {
-  const [codigo, setCodigo] = useState('');  // Guardar el texto ingresado
-  const [resultado, setResultado] = useState('');  // Guardar el resultado del análisis
-  const [archivo, setArchivo] = useState(null);  // Guardar el archivo cargado
-  const [esArchivo, setEsArchivo] = useState(false);  // Determinar si se envía un archivo o un texto
+  const [codigo, setCodigo] = useState('');
+  const [resultado, setResultado] = useState([]);
+  const [archivo, setArchivo] = useState(null);
+  const [esArchivo, setEsArchivo] = useState(false);
 
-  // Función que maneja la solicitud POST al backend
   const analizarCodigo = () => {
-    // Si se está enviando un archivo
     if (esArchivo && archivo) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const contenido = e.target.result;
-        enviarCodigo(contenido);  // Enviar el contenido del archivo
+        enviarCodigo(contenido);
       };
-      reader.readAsText(archivo);  // Leer el archivo como texto
+      reader.readAsText(archivo);
     } else {
-      enviarCodigo(codigo);  // Enviar el código como texto
+      enviarCodigo(codigo);
     }
   };
 
-  // Función para enviar el código al backend
   const enviarCodigo = (codigo) => {
     fetch('http://localhost:8080/analizador/analizar', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',  // Indicar que enviamos JSON
-      },
-      body: JSON.stringify({ codigo }),  // Enviar el código como JSON
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codigo }),
     })
-      .then((res) => res.json())  // Esperar que la respuesta sea un JSON
+      .then((res) => res.json())
       .then((data) => {
-        setResultado(JSON.stringify(data.tokens, null, 2));  // Mostrar los tokens
+        setResultado(data.tokens);  // Guardamos los tokens como array
       })
-      .catch((err) => console.error('Error:', err));  // Capturar cualquier error
+      .catch((err) => console.error('Error:', err));
   };
 
-  // Función para manejar la entrada de texto
   const handleCodigoChange = (e) => {
-    setCodigo(e.target.value);  // Actualizar el código ingresado
-    setEsArchivo(false);  // Si el texto cambia, desactivar la opción de archivo
+    setCodigo(e.target.value);
+    setEsArchivo(false);
   };
 
-  // Función para manejar el cambio en el archivo seleccionado
   const handleArchivoChange = (e) => {
-    setArchivo(e.target.files[0]);  // Guardar el archivo
-    setEsArchivo(true);  // Activar la opción de archivo
+    setArchivo(e.target.files[0]);
+    setEsArchivo(true);
   };
 
   return (
@@ -70,16 +63,35 @@ function App() {
           <input
             type="file"
             onChange={handleArchivoChange}
-            accept=".txt"  // Permitir solo archivos de texto
+            accept=".txt"
           />
         </div>
 
         <button onClick={analizarCodigo}>Analizar</button>
-
-        {resultado && (
+        
+        {resultado.length > 0 && ( //Lógica para tabla de resultados
           <div>
             <h3>Resultado:</h3>
-            <pre>{resultado}</pre>  {/* Mostrar el resultado del análisis */}
+            <table className="resultado-tabla">
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resultado.map((token, index) => {
+                  // Cada token viene como "valor -> Tipo", separamos
+                  const [valor, tipo] = token.split(' -> ');
+                  return (
+                    <tr key={index}>
+                      <td>{valor}</td>
+                      <td>{tipo}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </header>

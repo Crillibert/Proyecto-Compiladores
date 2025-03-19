@@ -38,10 +38,36 @@ button {
   cursor: pointer;
   border-radius: 5px;
   border: none;
-  background-color: #fb6161bb;
+  background-color: #8a1c99bb;
   color: #000000;
 }
 
 button:hover {
   background-color: #4fa3c4;
+}
+
+.resultado-tabla {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: black;
+}
+
+.resultado-tabla th, .resultado-tabla td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.resultado-tabla th {
+  background-color: #0e526d;
+  color: white;
+}
+
+.resultado-tabla tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.resultado-tabla tr:hover {
+  background-color: #ddd;
 }
