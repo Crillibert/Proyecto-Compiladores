@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 public class LectorDeArchivos {
     //Se crea una lista de listas, donde cada lista son los tokens analizados
     private String nombreArchivo;
@@ -20,8 +21,8 @@ public class LectorDeArchivos {
             while (Lector.hasNextLine()){
                 String Linea = Lector.nextLine();
                 AnLexico scanner  =  new AnLexico(Linea,numeroLinea); 
-                List<String> Tokens = scanner.AnalizadorCadena();
-                ListaFinal.add(Tokens);
+                Map.Entry<List<String>, List<String>> Tokens = scanner.AnalizadorCadena();
+                ListaFinal.add(Tokens.getKey());
                 numeroLinea++;
             }
             Lector.close();

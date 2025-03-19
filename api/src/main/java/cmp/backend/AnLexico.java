@@ -3,6 +3,8 @@ package cmp.backend;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.*;
+import java.util.Map;
+import java.util.AbstractMap;
 
 public class AnLexico {
     // Los comentarios pueden ser aceptados con // y terminan con salto de linea
@@ -27,7 +29,9 @@ public class AnLexico {
     //Agregar operador ++ y --
     private char[] operadores = new char[]{'+', '-', '*', '/', '^', '=', '#', '>', '<','#','!'};
     private char[] agrupadores = new char[]{'(', ')', '[', ']', '{', '}', '"'};
+    
     private List<String> Tokens = new ArrayList<>();
+    private List<String> Errors = new ArrayList<>();
     private String CadenaFuente;
     private int numeroLinea;
 
@@ -81,8 +85,9 @@ public class AnLexico {
         return MatchNumero.matches();
     }
 
-    public List<String> AnalizadorCadena() {
+    public Map.Entry<List<String>, List<String>> AnalizadorCadena() {
         char[] fuente = CadenaFuente.toCharArray();
+
         String lexema = "";
         int i = 0;
         boolean enComentarioBloque = false;
@@ -142,7 +147,8 @@ public class AnLexico {
                     } else if (esIdentificador(lexema)) {
                         Tokens.add(lexema + "   -> Identificador");
                     }else{
-                        Tokens.add(lexema + "   -> Error en columna "+i+", fila" +numeroLinea);
+                        GestiondeErrores ManejoError = new GestiondeErrores(lexema);    
+                        Errors.add(ManejoError.detectarError() + "   -> Error en columna "+i+", fila " +numeroLinea);
                     }
                     lexema = ""; // Reiniciar el lexema
                 }
@@ -192,14 +198,17 @@ public class AnLexico {
                 Tokens.add(lexema + "   -> Identificador");
             }
         }
-        return Tokens;
+        return new AbstractMap.SimpleEntry<>(Tokens, Errors);
     }
 
     public static void main(String[] args) {
-        String str = "IF ( contador==1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
+        String str = "IF ( contador==1.1.1){return=1;} /* Comentario bloque */ // Comentario de línea \n Else {return=-5;}";
         AnLexico scanner = new AnLexico(str,1);    
-        List<String> Tokens = scanner.AnalizadorCadena();
-        for (String s : Tokens){
+        Map.Entry<List<String>, List<String>> result = scanner.AnalizadorCadena();
+        for (String s : result.getKey()){
+            System.out.println(s);
+        }
+        for (String s : result.getValue()){
             System.out.println(s);
         }
     }
