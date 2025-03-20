@@ -1,5 +1,5 @@
-# Usa una imagen base de OpenJDK 21 (cambia si usas otra versión)
-FROM openjdk:21-jdk-slim AS build
+# Usa OpenJDK 24 como base
+FROM openjdk:24-jdk-slim AS build
 
 # Establecer el directorio de trabajo en /app
 WORKDIR /app
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y maven
 # Copiar solo el archivo pom.xml para descargar dependencias primero
 COPY api/pom.xml /app/api/
 
-# Descargar dependencias (esto evita que Render las tenga que bajar cada vez)
+# Descargar dependencias
 RUN mvn dependency:go-offline -f /app/api/pom.xml
 
 # Copiar el código fuente del proyecto
@@ -20,7 +20,7 @@ COPY api/ /app/api/
 RUN mvn clean package -f /app/api/pom.xml
 
 # Segunda fase: Crear una imagen limpia para ejecutar el JAR
-FROM openjdk:21-jdk-slim
+FROM openjdk:24-jdk-slim
 WORKDIR /app
 
 # Copiar el JAR compilado desde la fase anterior
@@ -31,5 +31,6 @@ EXPOSE 8080
 
 # Ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
 
 
