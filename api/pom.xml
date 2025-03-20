@@ -27,9 +27,9 @@
 
     <!-- Spring Web para REST -->
     <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-web</artifactId>
-         <version>2.7.6</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>3.2.4</version>
     </dependency>
 
     <!-- Otras dependencias si las ocupás -->
