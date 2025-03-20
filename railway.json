@@ -1,0 +1,8 @@
+{
+    "build": {
+      "command": "cd api && mvn clean package"
+    },
+    "start": {
+      "command": "cd api && mvn spring-boot:run"
+    }
+  }
