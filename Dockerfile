@@ -4,22 +4,20 @@ FROM openjdk:24-jdk-slim AS build
 # Establecer el directorio de trabajo dentro del contenedor en /app
 WORKDIR /app
 
-# Copiar el archivo mvnw y darle permisos de ejecución
-COPY api/mvnw /app/api/mvnw
-RUN chmod +x /app/api/mvnw
+# Instalar Maven globalmente
+RUN apt-get update && apt-get install -y maven
 
-# Copiar los archivos de la carpeta `api` al directorio de trabajo del contenedor
+# Copiar los archivos del proyecto al directorio de trabajo
 COPY api/ /app/api/
-
-# Copiar las librerías si es necesario (ajustar si se requieren archivos desde lib)
 COPY lib/ /app/lib/
 
-# Ejecutar Maven usando el wrapper
-RUN ./api/mvnw clean install
+# Ejecutar Maven para construir el proyecto
+RUN mvn clean install -f /app/api/pom.xml
 
 # Exponer el puerto en el que la aplicación Spring Boot estará corriendo (por defecto: 8080)
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación Spring Boot (usando el archivo JAR generado)
 CMD ["java", "-jar", "api/target/*.jar"]
+
 
