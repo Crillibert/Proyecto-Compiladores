@@ -5,6 +5,7 @@ import SeleccionarArchivo from './components/SeleccionarArchivo';
 function App() {
   const [codigo, setCodigo] = useState('');
   const [resultado, setResultado] = useState([]);
+  const [errores, setErrores] = useState([]); // Nuevo estado para los errores
   const [archivo, setArchivo] = useState(null);
   const [esArchivo, setEsArchivo] = useState(false);
 
@@ -29,7 +30,8 @@ function App() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setResultado(data.tokens);  // Guardamos los tokens como array
+        setResultado(data.tokens || []); // Guardamos los tokens
+        setErrores(data.errors || []);  // Guardamos los errores
       })
       .catch((err) => console.error('Error:', err));
   };
@@ -68,8 +70,21 @@ function App() {
         </div>
 
         <button onClick={analizarCodigo}>Analizar</button>
-        
-        {resultado.length > 0 && ( //Lógica para tabla de resultados
+
+        {/* Sección para mostrar los errores */}
+        {errores.length > 0 && (
+          <div className="errores-container">
+            <h3>Errores Léxicos:</h3>
+            <ul className="errores-lista">
+              {errores.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Sección para mostrar los tokens */}
+        {resultado.length > 0 && (
           <div>
             <h3>Resultado:</h3>
             <table className="resultado-tabla">
@@ -81,7 +96,6 @@ function App() {
               </thead>
               <tbody>
                 {resultado.map((token, index) => {
-                  // Cada token viene como "valor -> Tipo", separamos
                   const [valor, tipo] = token.split(' -> ');
                   return (
                     <tr key={index}>

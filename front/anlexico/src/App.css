@@ -71,3 +71,23 @@ button:hover {
 .resultado-tabla tr:hover {
   background-color: #ddd;
 }
+.errores-container {
+  margin-top: 20px;
+  padding: 10px;
+  width: 80%;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+.errores-lista {
+  list-style-type: none;
+  color: red;
+  font-weight: bold;
+  padding: 0;
+}
+
+.errores-lista li {
+  margin: 5px 0;
+}
+
