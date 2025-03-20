@@ -7,5 +7,6 @@
         "c:\\Users\\04dan\\Dropbox\\Mi PC (LAPTOP-35D3RKBD)\\Desktop\\URL\\2025\\COMPILADORES\\Proyecto-Compiladores\\lib\\hamcrest-core-1.3.jar"
     ],
     "java.debug.settings.onBuildFailureProceed": true,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.compile.nullAnalysis.mode": "automatic"
 }
