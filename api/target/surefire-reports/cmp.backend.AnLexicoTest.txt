@@ -1,9 +1,0 @@
--------------------------------------------------------------------------------
-Test set: cmp.backend.AnLexicoTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.104 s <<< FAILURE! - in cmp.backend.AnLexicoTest
-initializationError(cmp.backend.AnLexicoTest)  Time elapsed: 0.009 s  <<< ERROR!
-org.junit.runners.model.InvalidTestClassError: 
-Invalid test class 'cmp.backend.AnLexicoTest':
-  1. Method testDeclaracionVariables() should be public
-

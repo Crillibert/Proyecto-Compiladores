@@ -1,0 +1,6 @@
+cmp\backend\AnLexico.class
+cmp\backend\TabladeSimbolos.class
+cmp\backend\Controller.class
+cmp\backend\GestiondeErrores.class
+cmp\backend\ApiApplication.class
+cmp\backend\LectorDeArchivos.class

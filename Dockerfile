@@ -11,13 +11,11 @@ RUN apt-get update && apt-get install -y maven
 COPY api/ /app/api/
 COPY lib/ /app/lib/
 
-# Ejecutar Maven para construir el proyecto
+# Ejecutar Maven para construir el proyecto (aunque ahora ya está hecho, solo por si hay que repetirlo en el futuro)
 RUN mvn clean install -f /app/api/pom.xml
 
 # Exponer el puerto en el que la aplicación Spring Boot estará corriendo (por defecto: 8080)
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación Spring Boot (usando el archivo JAR generado)
-CMD ["java", "-jar", "api/target/*.jar"]
-
-
+# Ejecutar la aplicación Spring Boot (usando el archivo JAR generado)
+CMD ["java", "-jar", "api/target/api-1.0-SNAPSHOT.jar"]
